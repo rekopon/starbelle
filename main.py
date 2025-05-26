@@ -9,30 +9,34 @@ intents = discord.Intents.all()
 with open('config.json') as f:
     config = json.load(f)
 
-GUILD_ID = 1084896922671775844  # Your Discord server (guild) ID
+GUILD_ID = 1084896922671775844  # Your server ID
 
 bot = commands.Bot(command_prefix='!', intents=intents)
 
-# Load all cogs asynchronously
 async def load_extensions():
     for filename in os.listdir('./cogs'):
         if filename.endswith('.py') and not filename.startswith('__'):
             print(f"Loading: {filename}")
             await bot.load_extension(f'cogs.{filename[:-3]}')
 
-# When the bot is ready
 @bot.event
 async def on_ready():
-    print(f'✅ Logged in as {bot.user}')
+    print(f'✅ Logged in as {bot.user} ({bot.user.id})')
     await load_extensions()
-    await bot.tree.sync(guild=discord.Object(id=GUILD_ID))  # Instant slash command sync
+    try:
+        synced = await bot.tree.sync(guild=discord.Object(id=GUILD_ID))
+        print(f"🔁 Synced {len(synced)} command(s) to guild {GUILD_ID}")
+    except Exception as e:
+        print(f"❌ Sync failed: {e}")
 
-# Slash command: /sync
 @bot.tree.command(name="sync", description="Manually sync slash commands")
-async def sync(interaction: discord.Interaction):
+async def manual_sync(interaction: discord.Interaction):
     await interaction.response.defer(ephemeral=True)
-    await bot.tree.sync(guild=discord.Object(id=GUILD_ID))
-    await interaction.followup.send("✅ Slash commands synced!", ephemeral=True)
+    try:
+        synced = await bot.tree.sync(guild=discord.Object(id=GUILD_ID))
+        await interaction.followup.send(f"✅ Synced {len(synced)} command(s) to this server.", ephemeral=True)
+    except Exception as e:
+        await interaction.followup.send(f"❌ Failed to sync: {e}", ephemeral=True)
+        print(f"❌ Sync command failed: {e}")
 
-# Start the bot
 bot.run(os.getenv("TOKEN"))
