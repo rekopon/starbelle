@@ -20,7 +20,7 @@ class AdminCommands(commands.Cog):
         channel_id: int = None
     ):
         self.db.add_achievement(name, description, type, role_id, threshold, channel_id)
-        await interaction.response.send_message(f"✅ Achievement '{name}' added.")
+        await interaction.response.send_message(f"🏆 Achievement '{name}' added.")
 
     @app_commands.command(name="approve", description="Approve a manual achievement")
     async def approve_manual(
@@ -32,6 +32,6 @@ class AdminCommands(commands.Cog):
         self.db.grant_manual_achievement(user.id, achievement_name)
         await interaction.response.send_message(f"✅ {user.display_name} granted achievement '{achievement_name}'.")
 
+# ✅ Make sure this is OUTSIDE the class
 async def setup(bot):
     await bot.add_cog(AdminCommands(bot))
-
