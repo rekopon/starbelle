@@ -8,7 +8,7 @@ class AdminCommands(commands.Cog):
         self.bot = bot
         self.db = Database()
 
-    @app_commands.command(name='addachievement', description='Add a new achievement')
+    @app_commands.command(name="addachievement", description="Add a new achievement")
     async def add_achievement(
         self,
         interaction: discord.Interaction,
@@ -22,7 +22,7 @@ class AdminCommands(commands.Cog):
         self.db.add_achievement(name, description, type, role_id, threshold, channel_id)
         await interaction.response.send_message(f"✅ Achievement '{name}' added.")
 
-    @app_commands.command(name='approve', description='Approve a manual achievement')
+    @app_commands.command(name="approve", description="Approve a manual achievement")
     async def approve_manual(
         self,
         interaction: discord.Interaction,
@@ -34,4 +34,4 @@ class AdminCommands(commands.Cog):
 
 async def setup(bot):
     await bot.add_cog(AdminCommands(bot))
-# Code included in full version; placeholder for zip packaging.
+
